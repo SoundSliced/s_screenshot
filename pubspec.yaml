@@ -1,9 +1,9 @@
-name: screenshot_maker
+name: s_screenshot
 description: A powerful Flutter package for capturing high-quality screenshots of widgets with multiple output formats (base64, bytes, file) and configurable options.
-issue_tracker: https://github.com/SoundSliced/screenshot_maker/issues
-repository: https://github.com/SoundSliced/screenshot_maker
+issue_tracker: https://github.com/SoundSliced/s_screenshot/issues
+repository: https://github.com/SoundSliced/s_screenshot
 version: 1.0.0
-homepage: https://github.com/SoundSliced/screenshot_maker
+homepage: https://github.com/SoundSliced/s_screenshot
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

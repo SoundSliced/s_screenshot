@@ -1,4 +1,4 @@
-part of 'screenshot_maker.dart';
+part of 's_screenshot.dart';
 
 /// Exception for screenshot capture failures.
 class ScreenshotException implements Exception {

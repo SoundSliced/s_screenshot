@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 part 'tools.dart';
 
-class ScreenshotMaker {
+class SScreenshot {
   /// Captures a widget screenshot using the provided [key].
   ///
   /// Returns String (base64), Uint8List (bytes), or File based on [config].

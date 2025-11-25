@@ -1,6 +1,6 @@
 # Screenshot Maker Example
 
-This example demonstrates all the features of the `screenshot_maker` package.
+This example demonstrates all the features of the `s_screenshot` package.
 
 ## Features Demonstrated
 

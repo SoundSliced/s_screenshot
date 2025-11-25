@@ -1,4 +1,4 @@
-# screenshot_maker
+# s_screenshot
 
 A powerful and flexible Flutter package for capturing high-quality screenshots of widgets with multiple output formats and configuration options.
 
@@ -31,7 +31,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  screenshot_maker: ^1.0.0
+  s_screenshot: ^1.0.0
 ```
 
 ## Usage
@@ -40,14 +40,14 @@ dependencies:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:screenshot_maker/screenshot_maker.dart';
+import 'package:s_screenshot/s_screenshot.dart';
 
 class MyWidget extends StatelessWidget {
   final GlobalKey _screenshotKey = GlobalKey();
 
   Future<void> captureScreenshot() async {
     try {
-      final base64String = await ScreenshotMaker.captureScreenshot(
+      final base64String = await SScreenshot.captureScreenshot(
         _screenshotKey,
         config: const ScreenshotConfig(
           resultType: ScreenshotResultType.base64,
@@ -75,7 +75,7 @@ class MyWidget extends StatelessWidget {
 ### Capture as Bytes
 
 ```dart
-final bytes = await ScreenshotMaker.captureScreenshot(
+final bytes = await SScreenshot.captureScreenshot(
   _screenshotKey,
   config: const ScreenshotConfig(
     resultType: ScreenshotResultType.bytes,
@@ -90,7 +90,7 @@ await someApi.uploadImage(bytes);
 ### Save Directly to File
 
 ```dart
-final file = await ScreenshotMaker.captureScreenshot(
+final file = await SScreenshot.captureScreenshot(
   _screenshotKey,
   config: ScreenshotConfig(
     resultType: ScreenshotResultType.file,
@@ -107,7 +107,7 @@ print('Saved to: ${file.path}');
 Useful for waiting for animations to complete:
 
 ```dart
-final screenshot = await ScreenshotMaker.captureScreenshot(
+final screenshot = await SScreenshot.captureScreenshot(
   _screenshotKey,
   config: const ScreenshotConfig(
     captureDelay: Duration(milliseconds: 500),
@@ -119,7 +119,7 @@ final screenshot = await ScreenshotMaker.captureScreenshot(
 ### Custom Configuration
 
 ```dart
-final screenshot = await ScreenshotMaker.captureScreenshot(
+final screenshot = await SScreenshot.captureScreenshot(
   _screenshotKey,
   config: const ScreenshotConfig(
     pixelRatio: 4.0,              // Higher quality
@@ -156,7 +156,7 @@ The package throws `ScreenshotException` with detailed error messages:
 
 ```dart
 try {
-  final screenshot = await ScreenshotMaker.captureScreenshot(_key);
+  final screenshot = await SScreenshot.captureScreenshot(_key);
 } on ScreenshotException catch (e) {
   print('Screenshot failed: ${e.message}');
   if (e.originalError != null) {
@@ -229,4 +229,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Repository
 
-https://github.com/SoundSliced/screenshot_maker
+https://github.com/SoundSliced/s_screenshot

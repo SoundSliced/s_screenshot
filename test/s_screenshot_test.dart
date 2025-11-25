@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:screenshot_maker/screenshot_maker.dart';
+import 'package:s_screenshot/s_screenshot.dart';
 
 void main() {
-  group('ScreenshotMaker', () {
+  group('SScreenshot', () {
     testWidgets('captureScreenshot returns base64 string',
         (WidgetTester tester) async {
       final key = GlobalKey();
@@ -27,7 +27,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.runAsync(() async {
-        final result = await ScreenshotMaker.capture(
+        final result = await SScreenshot.capture(
           key,
           config: const ScreenshotConfig(
             resultType: ScreenshotResultType.base64,
@@ -60,7 +60,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.runAsync(() async {
-        final result = await ScreenshotMaker.capture(
+        final result = await SScreenshot.capture(
           key,
           config: const ScreenshotConfig(
             resultType: ScreenshotResultType.bytes,
@@ -94,7 +94,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.runAsync(() async {
-        final result1 = await ScreenshotMaker.capture(
+        final result1 = await SScreenshot.capture(
           key,
           config: const ScreenshotConfig(
             pixelRatio: 1.0,
@@ -102,7 +102,7 @@ void main() {
           ),
         );
 
-        final result2 = await ScreenshotMaker.capture(
+        final result2 = await SScreenshot.capture(
           key,
           config: const ScreenshotConfig(
             pixelRatio: 3.0,
@@ -120,7 +120,7 @@ void main() {
       final key = GlobalKey();
 
       expect(
-        () => ScreenshotMaker.capture(key),
+        () => SScreenshot.capture(key),
         throwsA(isA<ScreenshotException>()),
       );
     });
@@ -146,7 +146,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        () => ScreenshotMaker.capture(key),
+        () => SScreenshot.capture(key),
         throwsA(isA<ScreenshotException>()),
       );
     });
@@ -174,7 +174,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        () => ScreenshotMaker.capture(
+        () => SScreenshot.capture(
           key,
           config: const ScreenshotConfig(
             resultType: ScreenshotResultType.file,
@@ -212,7 +212,7 @@ void main() {
 
       // Capture with delay - use runAsync to allow real async operations
       await tester.runAsync(() async {
-        final result = await ScreenshotMaker.capture(
+        final result = await SScreenshot.capture(
           key,
           config: const ScreenshotConfig(
             captureDelay: Duration(milliseconds: 100),

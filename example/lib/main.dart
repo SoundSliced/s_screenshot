@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:screenshot_maker/screenshot_maker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:s_screenshot/s_screenshot.dart';
 
 void main() {
   runApp(const MyApp());
@@ -46,7 +46,7 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
     });
 
     try {
-      final result = await ScreenshotMaker.capture(
+      final result = await SScreenshot.capture(
         _screenshotKey,
         config: const ScreenshotConfig(
           pixelRatio: 3.0,
@@ -79,7 +79,7 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
     });
 
     try {
-      final result = await ScreenshotMaker.capture(
+      final result = await SScreenshot.capture(
         _screenshotKey,
         config: const ScreenshotConfig(
           pixelRatio: 2.0,
@@ -116,7 +116,7 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
       final filePath =
           '${directory.path}/screenshot_${DateTime.now().millisecondsSinceEpoch}.png';
 
-      final result = await ScreenshotMaker.capture(
+      final result = await SScreenshot.capture(
         _screenshotKey,
         config: ScreenshotConfig(
           pixelRatio: 3.0,
@@ -151,7 +151,7 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
     });
 
     try {
-      final result = await ScreenshotMaker.capture(
+      final result = await SScreenshot.capture(
         _screenshotKey,
         config: const ScreenshotConfig(
           pixelRatio: 3.0,
