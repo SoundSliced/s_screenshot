@@ -1,6 +1,5 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:s_screenshot/s_screenshot.dart';
 
 void main() {
@@ -34,7 +33,7 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
   final GlobalKey _screenshotKey = GlobalKey();
   String _status = 'Ready to capture';
   String? _base64Result;
-  File? _savedFile;
+  List<int>? _bytesResult;
   bool _isCapturing = false;
 
   Future<void> _captureAsBase64() async {
@@ -42,7 +41,7 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
       _isCapturing = true;
       _status = 'Capturing as base64...';
       _base64Result = null;
-      _savedFile = null;
+      _bytesResult = null;
     });
 
     try {
@@ -57,6 +56,7 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
 
       setState(() {
         _base64Result = result as String;
+        _bytesResult = null;
         _status = 'Captured! Base64 length: ${_base64Result!.length}';
       });
     } on ScreenshotException catch (e) {
@@ -75,7 +75,7 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
       _isCapturing = true;
       _status = 'Capturing as bytes...';
       _base64Result = null;
-      _savedFile = null;
+      _bytesResult = null;
     });
 
     try {
@@ -90,6 +90,8 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
 
       final bytes = result as List<int>;
       setState(() {
+        _bytesResult = bytes;
+        _base64Result = null;
         _status = 'Captured! Bytes length: ${bytes.length}';
       });
     } on ScreenshotException catch (e) {
@@ -103,33 +105,74 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
     }
   }
 
-  Future<void> _captureAsFile() async {
+  Future<void> _captureAndDownloadPNG() async {
     setState(() {
       _isCapturing = true;
-      _status = 'Capturing and saving to file...';
+      _status = 'Capturing and downloading PNG file...';
       _base64Result = null;
-      _savedFile = null;
+      _bytesResult = null;
     });
 
     try {
-      final directory = await getTemporaryDirectory();
-      final filePath =
-          '${directory.path}/screenshot_${DateTime.now().millisecondsSinceEpoch}.png';
+      final fileName =
+          'screenshot_${DateTime.now().millisecondsSinceEpoch}.png';
 
-      final result = await SScreenshot.capture(
+      await SScreenshot.captureAndDownload(
         _screenshotKey,
-        config: ScreenshotConfig(
-          pixelRatio: 3.0,
-          resultType: ScreenshotResultType.file,
-          filePath: filePath,
-          shouldShowDebugLogs: true,
-        ),
+        fileName: fileName,
+        pixelRatio: 3.0,
+        shouldShowDebugLogs: true,
+        fileSaverCallback: (bytes, name) async {
+          await FileSaver.instance.saveFile(
+            name: name,
+            bytes: Uint8List.fromList(bytes),
+            mimeType: MimeType.png,
+          );
+        },
       );
 
-      final file = result as File;
       setState(() {
-        _savedFile = file;
-        _status = 'Saved to: ${file.path}';
+        _status = 'PNG file downloaded: $fileName';
+      });
+    } on ScreenshotException catch (e) {
+      setState(() {
+        _status = 'Error: ${e.message}';
+      });
+    } finally {
+      setState(() {
+        _isCapturing = false;
+      });
+    }
+  }
+
+  Future<void> _captureAndDownloadJPEG() async {
+    setState(() {
+      _isCapturing = true;
+      _status = 'Capturing and downloading JPEG file...';
+      _base64Result = null;
+      _bytesResult = null;
+    });
+
+    try {
+      final fileName =
+          'screenshot_${DateTime.now().millisecondsSinceEpoch}.jpeg';
+
+      await SScreenshot.captureAndDownload(
+        _screenshotKey,
+        fileName: fileName,
+        pixelRatio: 3.0,
+        shouldShowDebugLogs: true,
+        fileSaverCallback: (bytes, name) async {
+          await FileSaver.instance.saveFile(
+            name: name,
+            bytes: Uint8List.fromList(bytes),
+            mimeType: MimeType.jpeg,
+          );
+        },
+      );
+
+      setState(() {
+        _status = 'JPEG file downloaded: $fileName';
       });
     } on ScreenshotException catch (e) {
       setState(() {
@@ -147,7 +190,7 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
       _isCapturing = true;
       _status = 'Waiting 2 seconds before capture...';
       _base64Result = null;
-      _savedFile = null;
+      _bytesResult = null;
     });
 
     try {
@@ -278,9 +321,15 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
             ),
             const SizedBox(height: 8),
             ElevatedButton.icon(
-              onPressed: _isCapturing ? null : _captureAsFile,
-              icon: const Icon(Icons.save),
-              label: const Text('Capture and Save to File'),
+              onPressed: _isCapturing ? null : _captureAndDownloadPNG,
+              icon: const Icon(Icons.image),
+              label: const Text('Download as PNG'),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton.icon(
+              onPressed: _isCapturing ? null : _captureAndDownloadJPEG,
+              icon: const Icon(Icons.image),
+              label: const Text('Download as JPEG'),
             ),
             const SizedBox(height: 8),
             ElevatedButton.icon(
@@ -316,10 +365,10 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
                 ),
               ),
             ],
-            if (_savedFile != null) ...[
+            if (_bytesResult != null) ...[
               const SizedBox(height: 16),
               const Text(
-                'Saved File Preview:',
+                'Captured Image Preview:',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -333,8 +382,8 @@ class _ScreenshotDemoState extends State<ScreenshotDemo> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.file(
-                    _savedFile!,
+                  child: Image.memory(
+                    Uint8List.fromList(_bytesResult!),
                     fit: BoxFit.contain,
                   ),
                 ),

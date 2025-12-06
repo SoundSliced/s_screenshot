@@ -4,3 +4,5 @@
 library;
 
 export 'src/s_screenshot.dart';
+export 'package:universal_io/io.dart' show File;
+export 'package:file_saver/file_saver.dart';

@@ -25,6 +25,9 @@ A powerful and flexible Flutter package for capturing high-quality screenshots o
 - Backward compatible legacy method
 - Comprehensive example app
 
+## DEMO
+![Demo](https://raw.githubusercontent.com/SoundSliced/s_screenshot/main/example/assets/example.gif)
+
 ## Installation
 
 Add this to your package's `pubspec.yaml` file:

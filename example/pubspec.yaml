@@ -11,7 +11,8 @@ dependencies:
     sdk: flutter
   s_screenshot:
     path: ../
-  path_provider: ^2.1.0
+  
+
 
 dev_dependencies:
   flutter_test:

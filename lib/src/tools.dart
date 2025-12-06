@@ -28,6 +28,9 @@ enum ScreenshotResultType {
 
   /// Returns File (requires path parameter)
   file,
+
+  /// Downloads file cross-platform (web: browser download, native: documents directory)
+  download,
 }
 
 /// Configuration options for screenshot capture.
@@ -44,6 +47,9 @@ class ScreenshotConfig {
   /// File path (required for file output).
   final String? filePath;
 
+  /// File name (required for download output). Defaults to 'screenshot_<timestamp>.png'
+  final String? fileName;
+
   /// Enable debug logging.
   final bool shouldShowDebugLogs;
 
@@ -55,6 +61,7 @@ class ScreenshotConfig {
     this.format = ScreenshotFormat.png,
     this.resultType = ScreenshotResultType.base64,
     this.filePath,
+    this.fileName,
     this.shouldShowDebugLogs = false,
     this.captureDelay,
   });
