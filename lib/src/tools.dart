@@ -26,10 +26,8 @@ enum ScreenshotResultType {
   /// Returns Uint8List bytes
   bytes,
 
-  /// Returns File (requires path parameter)
-  file,
-
   /// Downloads file cross-platform (web: browser download, native: documents directory)
+  /// BREAKING CHANGE v2.0.0: Removed 'file' type. Use captureAndDownload() instead.
   download,
 }
 
@@ -44,10 +42,7 @@ class ScreenshotConfig {
   /// Output type.
   final ScreenshotResultType resultType;
 
-  /// File path (required for file output).
-  final String? filePath;
-
-  /// File name (required for download output). Defaults to 'screenshot_<timestamp>.png'
+  /// File name (required for download output). Defaults to 'screenshot_[timestamp].png'
   final String? fileName;
 
   /// Enable debug logging.
@@ -60,7 +55,6 @@ class ScreenshotConfig {
     this.pixelRatio = 3.0,
     this.format = ScreenshotFormat.png,
     this.resultType = ScreenshotResultType.base64,
-    this.filePath,
     this.fileName,
     this.shouldShowDebugLogs = false,
     this.captureDelay,

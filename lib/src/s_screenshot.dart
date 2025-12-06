@@ -17,12 +17,6 @@ class SScreenshot {
     ScreenshotConfig config = const ScreenshotConfig(),
   }) async {
     try {
-      if (config.resultType == ScreenshotResultType.file &&
-          (config.filePath == null || config.filePath!.isEmpty)) {
-        throw ScreenshotException(
-            'filePath is required when resultType is file');
-      }
-
       if (config.resultType == ScreenshotResultType.download &&
           (config.fileName == null || config.fileName!.isEmpty)) {
         throw ScreenshotException(
@@ -80,16 +74,8 @@ class SScreenshot {
         case ScreenshotResultType.bytes:
           return buffer;
 
-        case ScreenshotResultType.file:
-          final file = File(config.filePath!);
-          await file.writeAsBytes(buffer);
-          if (kDebugMode && config.shouldShowDebugLogs) {
-            debugPrint('Screenshot saved to: ${file.path}');
-          }
-          return file;
-
         case ScreenshotResultType.download:
-          // For download type, return bytes and let saveScreenshot handle the file saving
+          // For download type, return bytes and let downloadScreenshot handle the file saving
           return buffer;
       }
     } catch (e) {
@@ -199,7 +185,7 @@ class SScreenshot {
   ///
   /// **Parameters:**
   /// - [key]: The GlobalKey of the widget to capture
-  /// - [fileName]: Optional custom file name. Defaults to 'screenshot_<timestamp>.png'
+  /// - [fileName]: Optional custom file name. Defaults to 'screenshot_[timestamp].png'
   /// - [pixelRatio]: The pixel ratio for capture quality. Defaults to 3.0
   /// - [captureDelay]: Optional delay before capturing to allow animations to complete
   /// - [shouldShowDebugLogs]: Enable debug logging. Defaults to false

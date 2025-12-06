@@ -152,7 +152,7 @@ void main() {
     });
 
     testWidgets(
-        'throws ScreenshotException when filePath missing for file result type',
+        'throws ScreenshotException when fileName missing for download result type',
         (WidgetTester tester) async {
       final key = GlobalKey();
 
@@ -177,14 +177,53 @@ void main() {
         () => SScreenshot.capture(
           key,
           config: const ScreenshotConfig(
-            resultType: ScreenshotResultType.file,
+            resultType: ScreenshotResultType.download,
           ),
         ),
         throwsA(
           isA<ScreenshotException>().having(
             (e) => e.message,
             'message',
-            contains('filePath is required'),
+            contains('fileName is required'),
+          ),
+        ),
+      );
+    });
+
+    testWidgets(
+        'throws ScreenshotException when fileName missing for download result type',
+        (WidgetTester tester) async {
+      final key = GlobalKey();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: RepaintBoundary(
+              key: key,
+              child: Container(
+                width: 100,
+                height: 100,
+                color: Colors.teal,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(
+        () => SScreenshot.capture(
+          key,
+          config: const ScreenshotConfig(
+            resultType: ScreenshotResultType.download,
+          ),
+        ),
+        throwsA(
+          isA<ScreenshotException>().having(
+            (e) => e.message,
+            'message',
+            contains('fileName is required'),
           ),
         ),
       );
@@ -210,7 +249,6 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Capture with delay - use runAsync to allow real async operations
       await tester.runAsync(() async {
         final result = await SScreenshot.capture(
           key,
@@ -224,6 +262,20 @@ void main() {
         expect((result as String).isNotEmpty, true);
       });
     });
+
+    testWidgets('downloadScreenshot throws when no callback provided',
+        (WidgetTester tester) async {
+      final bytes = Uint8List.fromList([1, 2, 3, 4, 5]);
+      const fileName = 'test.png';
+
+      expect(
+        () => SScreenshot.downloadScreenshot(
+          bytes,
+          fileName: fileName,
+        ),
+        throwsA(isA<ScreenshotException>()),
+      );
+    });
   });
 
   group('ScreenshotConfig', () {
@@ -233,7 +285,7 @@ void main() {
       expect(config.pixelRatio, 3.0);
       expect(config.format, ScreenshotFormat.png);
       expect(config.resultType, ScreenshotResultType.base64);
-      expect(config.filePath, null);
+      expect(config.fileName, null);
       expect(config.shouldShowDebugLogs, false);
       expect(config.captureDelay, null);
     });
@@ -243,7 +295,7 @@ void main() {
         pixelRatio: 2.0,
         format: ScreenshotFormat.rawRgba,
         resultType: ScreenshotResultType.bytes,
-        filePath: '/test/path.png',
+        fileName: 'screenshot.png',
         shouldShowDebugLogs: true,
         captureDelay: Duration(seconds: 1),
       );
@@ -251,9 +303,19 @@ void main() {
       expect(config.pixelRatio, 2.0);
       expect(config.format, ScreenshotFormat.rawRgba);
       expect(config.resultType, ScreenshotResultType.bytes);
-      expect(config.filePath, '/test/path.png');
+      expect(config.fileName, 'screenshot.png');
       expect(config.shouldShowDebugLogs, true);
       expect(config.captureDelay, const Duration(seconds: 1));
+    });
+
+    test('supports download result type', () {
+      const config = ScreenshotConfig(
+        resultType: ScreenshotResultType.download,
+        fileName: 'my_screenshot.png',
+      );
+
+      expect(config.resultType, ScreenshotResultType.download);
+      expect(config.fileName, 'my_screenshot.png');
     });
   });
 
