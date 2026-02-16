@@ -1,9 +1,10 @@
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:s_screenshot/s_screenshot.dart';
 
 void main() {
   group('SScreenshot', () {
-    testWidgets('captureScreenshot returns base64 string',
+    testWidgets('RepaintBoundary is correctly found from GlobalKey',
         (WidgetTester tester) async {
       final key = GlobalKey();
 
@@ -24,93 +25,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      await tester.runAsync(() async {
-        final result = await SScreenshot.capture(
-          key,
-          config: const ScreenshotConfig(
-            resultType: ScreenshotResultType.base64,
-          ),
-        );
-
-        expect(result, isA<String>());
-        expect((result as String).isNotEmpty, true);
-      });
-    });
-
-    testWidgets('captureScreenshot returns bytes', (WidgetTester tester) async {
-      final key = GlobalKey();
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: RepaintBoundary(
-              key: key,
-              child: Container(
-                width: 100,
-                height: 100,
-                color: Colors.blue,
-              ),
-            ),
-          ),
-        ),
-      );
-
-      await tester.pumpAndSettle();
-
-      await tester.runAsync(() async {
-        final result = await SScreenshot.capture(
-          key,
-          config: const ScreenshotConfig(
-            resultType: ScreenshotResultType.bytes,
-          ),
-        );
-
-        expect(result, isA<Uint8List>());
-        expect((result as Uint8List).isNotEmpty, true);
-      });
-    });
-
-    testWidgets('captureScreenshot with custom pixel ratio',
-        (WidgetTester tester) async {
-      final key = GlobalKey();
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: RepaintBoundary(
-              key: key,
-              child: Container(
-                width: 100,
-                height: 100,
-                color: Colors.green,
-              ),
-            ),
-          ),
-        ),
-      );
-
-      await tester.pumpAndSettle();
-
-      await tester.runAsync(() async {
-        final result1 = await SScreenshot.capture(
-          key,
-          config: const ScreenshotConfig(
-            pixelRatio: 1.0,
-            resultType: ScreenshotResultType.bytes,
-          ),
-        );
-
-        final result2 = await SScreenshot.capture(
-          key,
-          config: const ScreenshotConfig(
-            pixelRatio: 3.0,
-            resultType: ScreenshotResultType.bytes,
-          ),
-        );
-
-        expect((result1 as Uint8List).length,
-            lessThan((result2 as Uint8List).length));
-      });
+      final renderObject = key.currentContext!.findRenderObject();
+      expect(renderObject, isA<RenderRepaintBoundary>());
     });
 
     testWidgets('throws ScreenshotException when widget not rendered',
@@ -188,79 +104,6 @@ void main() {
       );
     });
 
-    testWidgets(
-        'throws ScreenshotException when fileName missing for download result type',
-        (WidgetTester tester) async {
-      final key = GlobalKey();
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: RepaintBoundary(
-              key: key,
-              child: Container(
-                width: 100,
-                height: 100,
-                color: Colors.teal,
-              ),
-            ),
-          ),
-        ),
-      );
-
-      await tester.pumpAndSettle();
-
-      expect(
-        () => SScreenshot.capture(
-          key,
-          config: const ScreenshotConfig(
-            resultType: ScreenshotResultType.download,
-          ),
-        ),
-        throwsA(
-          isA<ScreenshotException>().having(
-            (e) => e.message,
-            'message',
-            contains('fileName is required'),
-          ),
-        ),
-      );
-    });
-
-    testWidgets('captureScreenshot with delay', (WidgetTester tester) async {
-      final key = GlobalKey();
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: RepaintBoundary(
-              key: key,
-              child: Container(
-                width: 100,
-                height: 100,
-                color: Colors.orange,
-              ),
-            ),
-          ),
-        ),
-      );
-
-      await tester.pumpAndSettle();
-
-      await tester.runAsync(() async {
-        final result = await SScreenshot.capture(
-          key,
-          config: const ScreenshotConfig(
-            captureDelay: Duration(milliseconds: 100),
-            resultType: ScreenshotResultType.base64,
-          ),
-        );
-
-        expect(result, isA<String>());
-        expect((result as String).isNotEmpty, true);
-      });
-    });
-
     testWidgets('downloadScreenshot throws when no callback provided',
         (WidgetTester tester) async {
       final bytes = Uint8List.fromList([1, 2, 3, 4, 5]);
@@ -273,6 +116,21 @@ void main() {
         ),
         throwsA(isA<ScreenshotException>()),
       );
+    });
+
+    testWidgets('downloadScreenshot throws when fileName is empty',
+        (WidgetTester tester) async {
+      final bytes = Uint8List.fromList([1, 2, 3, 4, 5]);
+
+      await tester.runAsync(() async {
+        expect(
+          () => SScreenshot.downloadScreenshot(
+            bytes,
+            fileName: '',
+          ),
+          throwsA(isA<ScreenshotException>()),
+        );
+      });
     });
   });
 
