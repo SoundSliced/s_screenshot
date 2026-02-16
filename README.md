@@ -44,7 +44,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  s_screenshot: ^3.0.0
+  s_screenshot: ^3.1.0
 ```
 
 Then run:
@@ -326,6 +326,15 @@ flutter test
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for version history and detailed changes.
+
+## What's New in v3.1.0
+
+🚀 **Performance Improvements**
+
+- Fixed `ui.Image` memory leak — native GPU resources are now properly disposed after byte extraction
+- Base64 encoding is now offloaded to a separate isolate via `compute()` on native platforms to avoid blocking the UI thread (falls back to main thread on web where isolates aren't available)
+- Replaced `Future.microtask(() {})` with `WidgetsBinding.instance.endOfFrame` for more reliable rendering pipeline synchronization
+- Fixed `ByteData` buffer view to use precise `offsetInBytes`/`lengthInBytes` instead of unbounded `asUint8List()`
 
 ## What's New in v2.0.0
 

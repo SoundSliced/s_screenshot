@@ -1,4 +1,12 @@
 
+
+## 3.1.0
+- `s_packages` dependency upgraded to ^1.3.0
+- Fixed `ui.Image` memory leak — native GPU resources are now properly disposed after byte extraction
+- Base64 encoding is now offloaded to a separate isolate via `compute()` on native platforms to avoid blocking the UI thread (falls back to main thread on web where isolates aren't available)
+- Replaced `Future.microtask(() {})` with `WidgetsBinding.instance.endOfFrame` for more reliable rendering pipeline synchronization
+- Fixed `ByteData` buffer view to use precise `offsetInBytes`/`lengthInBytes` instead of unbounded `asUint8List()`
+
 ## 3.0.0
 - package no longer holds the source code for it, but exports/exposes the `s_packages` package instead, which will hold this package's latest source code.
 - The only future changes to this package will be made via `s_packages` package dependency upgrades, in order to bring the new fixes or changes to this package
