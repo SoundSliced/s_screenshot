@@ -44,7 +44,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  s_screenshot: ^3.2.0
+  s_screenshot: ^4.0.0
 ```
 
 Then run:

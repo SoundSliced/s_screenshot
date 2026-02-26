@@ -2,7 +2,7 @@ name: s_screenshot
 description: A powerful Flutter package for capturing high-quality screenshots of widgets with multiple output formats (base64, bytes, file) and configurable options.
 issue_tracker: https://github.com/SoundSliced/s_screenshot/issues
 repository: https://github.com/SoundSliced/s_screenshot
-version: 3.2.0
+version: 4.0.0
 homepage: https://github.com/SoundSliced/s_screenshot
 
 environment:
@@ -12,7 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  s_packages: ^1.6.0
+  s_packages: ^3.0.0
 
 dev_dependencies:
   flutter_test:
